@@ -1,0 +1,33 @@
+/**
+ * ---------------------------------------------------------------------
+ *
+ * GLPI - Gestionnaire Libre de Parc Informatique
+ *
+ * http://glpi-project.org
+ *
+ * @copyright 2015-2024 Teclib' and contributors.
+ * @copyright 2003-2014 by the INDEPNET Development Team.
+ * @licence   https://www.gnu.org/licenses/gpl-3.0.html
+ *
+ * ---------------------------------------------------------------------
+ *
+ * LICENSE
+ *
+ * This file is part of GLPI.
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <https://www.gnu.org/licenses/>.
+ *
+ * ---------------------------------------------------------------------
+ */
+var insertIntoEditor=[],uploaded_images=[];function uploadFile(e,t){insertIntoEditor[e.name]=isImage(e);var n=$('[data-uploader-name="'+t.getElement().name+'"]');0===n.length&&(n=$(t.getElement()).closest("form").find('[data-uploader-name="filename"]')),0===n.length&&(n=$(t.getElement()).closest("form").find("[data-uploader-name=]").first()),n.fileupload("add",{files:[e]})}var handleUploadedFile=function(e,t,n,a,i){$.ajax({type:"POST",url:CFG_GLPI.root_doc+"/ajax/getFileTag.php",data:{data:t},dataType:"JSON",success:function(o){$.each(e,(function(e,r){if(void 0===t[e].error){var d=o[e],l=null;if(i){l=tinyMCE.get(i);const e=uploaded_images.find((function(e){return e.filename===r.name})),t=void 0!==e?l.dom.select('img[data-upload_id="'+e.upload_id+'"]'):[];t.length>0?l.dom.setAttrib(t,"id",d.tag.replace(/#/g,"")):Object.prototype.hasOwnProperty.call(insertIntoEditor,r.name)&&insertIntoEditor[r.name]&&(insertImgFromFile(l,r,d.tag),n=l.targetElm.name)}displayUploadedFile(t[e],d,l,n,a),a.parent().find(".uploadbar").text(__("Upload successful")).css("width","100%").delay(2e3).fadeOut("slow")}else a.parent().find(".uploadbar").text(t[e].error).css("width","100%")}))},error:function(e){},complete:function(){$.each(e,(function(e,t){delete insertIntoEditor[t.name]}))}})},displayUploadedFile=function(e,t,n,a,i){var o=$('input[name^="_'+a+'["]').length,r=e.name.split(".").pop(),d=$("<p></p>").attr("id",e.id).html(getExtIcon(r)+"&nbsp;<b>"+e.display+"</b>&nbsp;("+getSize(e.size)+")&nbsp;").appendTo(i);$("<input/>").attr("type","hidden").attr("name","_"+a+"["+o+"]").attr("value",e.name).appendTo(d),$("<input/>").attr("type","hidden").attr("name","_prefix_"+a+"["+o+"]").attr("value",e.prefix).appendTo(d),$("<input/>").attr("type","hidden").attr("name","_tag_"+a+"["+o+"]").attr("value",t.name).appendTo(d);var l={0:e.id,1:e.id+"2"};$('<span class="ti ti-circle-x pointer"></span>').click((function(){deleteImagePasted(l,t.tag,n)})).appendTo(d)},deleteImagePasted=function(e,t,n){if($.each(e,(function(e,t){$("#"+t).remove()})),void 0!==n&&void 0!==n.dom){var a=new RegExp("#","g");n.dom.remove(t.replace(a,""))}},insertImgFromFile=function(e,t,n){var a=(window.URL||window.webkitURL).createObjectURL(t),i=new RegExp("#","g"),o=$(tinyMCE.activeEditor.getContainer()).height()-60,r=$(tinyMCE.activeEditor.getContainer()).width()-120;if(window.FileReader&&window.File&&window.FileList&&window.Blob){e.setProgressState(!0);var d=new FileReader;d.onload=function(t){var d=new Image;d.src=t.target.result,d.onload=function(){var t=this.width,d=this.height,l=0;t>r&&(d*=l=r/t,t*=l),d>o&&(t*=l=o/d,d*=l),e.execCommand("mceInsertContent",!1,"<img width='"+t+"' height='"+d+"' id='"+n.replace(i,"")+"' src='"+a+"'>"),e.setProgressState(!1)}},d.readAsDataURL(t)}},dataURItoBlob=function(e){var t;t=e.split(",")[0].indexOf("base64")>=0?atob(e.split(",")[1]):unescape(e.split(",")[1]);for(var n=e.split(",")[0].split(":")[1].split(";")[0],a=n.split("/")[1],i=new Uint8Array(t.length),o=0;o<t.length;o++)i[o]=t.charCodeAt(o);var r=new Blob([i],{type:n});return r.name="image_paste"+Math.floor(1e7*Math.random()+1)+"."+a,r},isImageFromPaste=function(e){return null!==e.match(new RegExp("<img.*data:image/"))},isImageBlobFromPaste=function(e){return null!==e.match(new RegExp("<img.*src=['\"]blob:"))},extractSrcFromImgTag=function(e){var t=$("<div></div>").append(e).find("img");return t.length>0?t.attr("src"):""},insertImageInTinyMCE=function(e,t){uploadFile(t,e)};const setRichTextEditorContent=function(e,t){if("undefined"==typeof tinyMCE)return;const n=tinyMCE.get(e);n&&(n.setContent(""),n.execCommand("mceInsertClipboardContent",!1,{html:t,internal:!0}),n.fire("keyup"))};"undefined"!=typeof tinyMCE&&tinyMCE.PluginManager.add("glpi_upload_doc",(function(e){let t=null;const n={pngblip:"image/png",jpegblip:"image/jpeg"};e.on("paste",(e=>{t=e.clipboardData})),e.on("PastePreProcess",(function(a){const i=[];if(null!==t&&t.types.includes("text/rtf")){const e=t.getData("text/rtf").replace(/(\r\n|\n|\r)/gm,"").matchAll(/\\(pngblip|jpegblip)([a-z0-9]*)}/g);for(const t of e){const e=t[1],a=t[2],o=function(e){return btoa(e.match(/\w{2}/g).map((function(e){return String.fromCharCode(parseInt(e,16))})).join(""))};i.push({type:n[e],content:o(a)})}}var o=$("<div></div>");o.append(a.content),o.find("img").each((function(){const t=$(this);let n=t.attr("src");if(null!==n.match("^file://")&&i.length>0){const e=i.shift();n=`data:${e.type};base64,`+e.content,t.attr("src",n)}if(null!==n.match(new RegExp("^(data|blob):"))){const a=Math.random().toString();t.attr("data-upload_id",a),fetch(n).then((function(e){return e.blob()})).then((function(t){if(!1===/^image\/.+/.test(t.type))return;t instanceof File&&(t=new Blob([t],{type:t.type}));const n=t.type.replace("image/","");t.name="image_paste"+Math.floor(1e7*Math.random()+1)+"."+n,uploaded_images.push({upload_id:a,filename:t.name}),uploadFile(t,e)}))}})),a.content=o.html()}))})),$((function(){$(document).bind("dragover",(function(e){e.preventDefault();var t,n=$(".dropzone"),a=window.dropZoneTimeout;a?clearTimeout(a):n.addClass("dragin");var i=!1,o=e.target;do{if($(o).hasClass("draghoverable")){i=!0,t=$(o);break}o=o.parentNode}while(null!==o);n.removeClass("dragin draghover"),i&&t.addClass("draghover")})),$(document).bind("drop",(function(e){e.preventDefault(),$(".draghoverable").removeClass("draghover")}))}));
