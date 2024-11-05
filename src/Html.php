@@ -1103,7 +1103,7 @@ HTML;
         $item = 'none',
         $option = '',
         bool $add_id = true,
-        bool $allow_insecured_iframe = false
+        bool $allow_insecured_iframe = true
     ) {
         /**
          * @var array $CFG_GLPI
