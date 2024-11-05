@@ -265,7 +265,7 @@ class Session
             $port = $_SERVER['SERVER_PORT'] ?? '';
         }
 
-        return "glpi_" . md5($path . $host . $port);
+        return "helpion_" . md5($path . $host . $port);
     }
 
     /**
