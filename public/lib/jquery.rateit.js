@@ -471,8 +471,6 @@ __webpack_require__.r(__webpack_exports__);
 /******/ 	
 /************************************************************************/
 var __webpack_exports__ = {};
-// This entry need to be wrapped in an IIFE because it need to be isolated against other modules in the chunk.
-(() => {
 /**
  * ---------------------------------------------------------------------
  *
@@ -480,7 +478,7 @@ var __webpack_exports__ = {};
  *
  * http://glpi-project.org
  *
- * @copyright 2015-2023 Teclib' and contributors.
+ * @copyright 2015-2024 Teclib' and contributors.
  * @copyright 2003-2014 by the INDEPNET Development Team.
  * @licence   https://www.gnu.org/licenses/gpl-3.0.html
  *
@@ -509,8 +507,6 @@ var __webpack_exports__ = {};
 // RateIt jQuery plugin
 __webpack_require__(73);
 __webpack_require__(74);
-
-})();
 
 /******/ })()
 ;

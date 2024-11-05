@@ -14,7 +14,6 @@
 /.vscode/
 /.idea/
 /vendor/*
-composer.json
 composer.lock
 /node_modules/*
 # Ignore tests and tools directories
